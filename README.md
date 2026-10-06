@@ -1,6 +1,6 @@
 # ALAWEE
 
-**Make room for Future You.** A mobile-first savings-plan concept shaped around the realities of a Nigerian NYSC service year.
+Make room for Future You. A mobile-first savings-plan concept shaped around the realities of a Nigerian NYSC service year.
 
 ALAWEE is an independent concept project created to explore an NYSC-focused savings experience. Its product inspiration comes from Cowrywise's savings-plan concept and clean, straightforward layout. Alawee adapts those broad ideas to a 12-month NYSC service journey with its own content and visual system; it does not reproduce Cowrywise's proprietary interface and is not affiliated with or developed by Cowrywise.
 
@@ -57,14 +57,6 @@ pnpm lint
 pnpm build
 ```
 
-## Screenshots
-
-Screenshots can be added here after review:
-
-| Overview             | Plan setup           | NYSC journey         |
-| -------------------- | -------------------- | -------------------- |
-| _Screenshot pending_ | _Screenshot pending_ | _Screenshot pending_ |
-
 ## Disclaimer
 
-ALAWEE is an independent concept project created by Dorcas Elijah to explore an NYSC-focused savings experience. It is inspired by digital savings products and is not affiliated with or developed by Cowrywise. This prototype does not provide financial services, accept deposits, or guarantee returns.
+ALAWEE is an independent concept project created by me to explore an NYSC-focused savings experience. It is inspired by digital savings products and is not affiliated with or developed by Cowrywise. This prototype does not provide financial services, accept deposits, or guarantee returns.
