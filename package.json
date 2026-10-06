@@ -1,0 +1,22 @@
+{
+  "name": "alawee-nysc-savings-concept",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "nuxt dev --host 0.0.0.0",
+    "build": "nuxt build",
+    "typecheck": "nuxt typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "nuxt": "^3.17.5",
+    "prettier": "^3.5.0",
+    "typescript": "^5.8.0",
+    "vue-tsc": "^2.2.0"
+  }
+}
