@@ -18,7 +18,9 @@ The prototype follows one service-year journey across three screens: an overview
 - Opt-in monthly automation preference for a last-week-of-month Alawee window, shown as a local simulation only.
 - “Reality mode” prototype with one tracked emergency pass per quarter.
 - Post-service goal selector.
-- Live share-of-Alawee, 12-month contributions, estimated returns, and POP projection.
+- Live share-of-Alawee, 12-month contributions, estimated returns, and POP projection at an illustrative 14% p.a. rate.
+- Interactive missed-month scenarios that recalculate contributions and the POP estimate.
+- Clear disclosures for the estimate assumptions and simulated automation/emergency pass; no account, bank, or transfer integration is active.
 - A 12-month NYSC timeline and progress view that carries the selected amount forward.
 - Naira formatting, keyboard-accessible controls, responsive layouts, and reduced-motion support.
 - No account, backend, payments, bank connection, or real transactions.
@@ -34,7 +36,7 @@ The stack and component/token approach are informed by Cowrywise's public engine
 
 ## Financial estimate
 
-The annual estimate rate is configurable in `src/data/plan.ts` and defaults to a 14.5% p.a. target illustration within the proposed 14–15% range. It is not a live or guaranteed Cowrywise rate. Cowrywise says the prevailing rate depends on the product and tenure and is shown when a plan is created; its help article describes daily calculation and proration. See the [interest-rate explanation](https://help.cowrywise.com/en/articles/1860560-how-much-interest-is-offered), [daily calculation guide](https://help.cowrywise.com/en/articles/7921379-how-to-calculate-the-interest-on-your-savings-plans), and [savings-rate endpoint](https://developers.cowrywise.com/reference/get-savings-rates). The prototype estimates simple daily accrual on each contribution, assuming deposits land at the start of each month. A production integration should retrieve the current rate for the selected tenure from Cowrywise and calculate using the product's actual terms; this estimate is not financial advice or a guaranteed return.
+The estimate uses a configurable 14% p.a. rate in `src/data/plan.ts` for illustration only. It is not a live or guaranteed Cowrywise rate. Cowrywise says the prevailing rate depends on the product and tenure and is shown when a plan is created; its help article describes daily calculation and proration. See the [interest-rate explanation](https://help.cowrywise.com/en/articles/1860560-how-much-interest-is-offered), [daily calculation guide](https://help.cowrywise.com/en/articles/7921379-how-to-calculate-the-interest-on-your-savings-plans), and [savings-rate endpoint](https://developers.cowrywise.com/reference/get-savings-rates). The prototype estimates simple daily accrual on each selected contribution, assuming deposits land at the start of each month. Missed-month scenarios omit those contributions from the estimate. A production integration should retrieve the current rate for the selected tenure from Cowrywise and calculate using the product's actual terms; this estimate is not financial advice or a guaranteed return.
 
 ## Design decisions
 

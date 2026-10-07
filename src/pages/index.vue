@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { PLAN } from "../data/plan";
 import { calculateProjection } from "../services/projection";
 import { formatNaira } from "../utils/currency";
 
 const step = ref(1);
+const screenContent = ref<HTMLElement | null>(null);
 const monthlySaving = ref<number>(PLAN.defaultMonthlySaving);
 const autoSplit = ref(false);
 const autoSave = ref(false);
 const savingsGoal = ref("Business");
+const skippedMonths = ref<number[]>([]);
 const usedPasses = ref<number[]>([]);
 const emergencyWithdrawals = ref<Record<number, number>>({});
 const withdrawalAmount = ref(5000);
-const projection = computed(() => calculateProjection(monthlySaving.value));
-const annualRateLabel = (PLAN.annualEstimateRate * 100).toFixed(1);
+const projection = computed(() =>
+  calculateProjection(monthlySaving.value, skippedMonths.value),
+);
+const annualRateLabel = (PLAN.annualEstimateRate * 100).toFixed(0);
 const savedSoFar = computed(() =>
   Math.max(
-    monthlySaving.value * (PLAN.illustrativeCurrentMonth - 1) -
+    monthlySaving.value * savedMonthsToDate.value -
       Object.values(emergencyWithdrawals.value).reduce(
         (sum, amount) => sum + amount,
         0,
@@ -29,11 +33,26 @@ const remaining = computed(() =>
   Math.max(targetSaved.value - savedSoFar.value, 0),
 );
 const savingPercent = computed(() => Math.round(projection.value.savingsShare));
+const savedMonthsToDate = computed(
+  () =>
+    PLAN.illustrativeCurrentMonth -
+    1 -
+    skippedMonths.value.filter(
+      (month) => month < PLAN.illustrativeCurrentMonth,
+    ).length,
+);
+
+watch(step, async () => {
+  await nextTick();
+  screenContent.value?.scrollTo({ top: 0 });
+  window.scrollTo({ top: 0 });
+});
 
 function restart() {
   monthlySaving.value = PLAN.defaultMonthlySaving;
   autoSplit.value = false;
   autoSave.value = false;
+  skippedMonths.value = [];
   usedPasses.value = [];
   emergencyWithdrawals.value = {};
   step.value = 1;
@@ -58,6 +77,12 @@ function useEmergencyPass(quarter: number) {
   };
   usedPasses.value = [...usedPasses.value, quarter];
 }
+
+function toggleSkippedMonth(month: number) {
+  skippedMonths.value = skippedMonths.value.includes(month)
+    ? skippedMonths.value.filter((value) => value !== month)
+    : [...skippedMonths.value, month];
+}
 </script>
 
 <template>
@@ -70,7 +95,7 @@ function useEmergencyPass(quarter: number) {
         :on-back="step > 1 ? () => step-- : undefined"
       />
       <Transition name="screen" mode="out-in">
-        <div :key="step" class="screen-content">
+        <div ref="screenContent" :key="step" class="screen-content">
           <template v-if="step === 1">
             <div class="intro-layout">
               <div class="intro-copy">
@@ -211,13 +236,14 @@ function useEmergencyPass(quarter: number) {
                   ><input v-model="autoSave" type="checkbox" /><span
                     ><b>Automate my saving</b
                     ><small
-                      >Watch for Alawee in the last week of each month</small
+                      >Demo: simulates Alawee arriving in the last week of each
+                      month</small
                     ></span
                   ></label
                 >
                 <p v-if="autoSave" class="demo-note">
-                  Opt-in concept only: no account connection or transfer is
-                  active in this demo.
+                  Preference selected in this demo; no account connection,
+                  allowance detection, reminder, or transfer is active.
                 </p>
                 <div class="share-note">
                   <span
@@ -262,12 +288,37 @@ function useEmergencyPass(quarter: number) {
                   >
                 </div>
                 <div class="projection-footnote">
-                  Target illustration: {{ annualRateLabel }}% p.a., prorated
-                  daily for each monthly contribution. Not a live Cowrywise rate
-                  or guaranteed return.
+                  {{ annualRateLabel }}% p.a. estimate. Not a live rate or
+                  guaranteed return.
                 </div>
+                <details class="assumption-details">
+                  <summary>How this estimate works</summary>
+                  <p>
+                    Assumes a fixed {{ annualRateLabel }}% p.a. rate, simple
+                    daily accrual, and deposits at the start of each selected
+                    month. Real rates, timing, and returns may differ.
+                  </p>
+                </details>
               </aside>
             </div>
+            <details class="scenario-control">
+              <summary>Try a missed-month scenario</summary>
+              <p>Tap any months you might skip. Your target rate stays fixed.</p>
+              <div class="scenario-months" aria-label="Contribution months">
+                <button
+                  v-for="month in 12"
+                  :key="month"
+                  type="button"
+                  :aria-pressed="!skippedMonths.includes(month)"
+                  :class="{ skipped: skippedMonths.includes(month) }"
+                  @click="toggleSkippedMonth(month)"
+                >
+                  {{ String(month).padStart(2, "0") }}
+                  <span>{{ skippedMonths.includes(month) ? "Skip" : "Save" }}</span>
+                </button>
+              </div>
+              <small>Selected deposits are assumed to land at the start of each month.</small>
+            </details>
             <div class="setup-bottom">
               <p>
                 <span class="tiny-spark">✳</span> Your plan can change as life
@@ -328,7 +379,7 @@ function useEmergencyPass(quarter: number) {
                 <span class="eyebrow">YOU’VE PUT ASIDE</span
                 ><strong>{{ formatNaira(savedSoFar) }}</strong
                 ><span class="saved-caption"
-                  >{{ PLAN.illustrativeCurrentMonth - 1 }} months ×
+                  >{{ savedMonthsToDate }} months ×
                   {{ formatNaira(monthlySaving) }}</span
                 >
                 <div class="progress-track">

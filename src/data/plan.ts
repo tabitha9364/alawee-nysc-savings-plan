@@ -2,7 +2,7 @@ export const PLAN = {
   monthlyAlawee: 77_000,
   defaultMonthlySaving: 20_000,
   months: 12,
-  annualEstimateRate: 0.145,
+  annualEstimateRate: 0.14,
   suggestedSavingShare: 30,
   illustrativeCurrentMonth: 4,
   minMonthlySaving: 1_000,
